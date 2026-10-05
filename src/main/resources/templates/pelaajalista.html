@@ -1,0 +1,26 @@
+<!-- MVC-rooli: View. Thymeleaf täyttää tähän PelaajaControllerin Modeliin lisäämät pelaajat ja niiden kierrokset. -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Golftracker</title>
+</head>
+<body>
+    <h1>Pelaajat ja kierrokset</h1>
+
+    <!-- th:each toistaa lohkon jokaiselle Modelin pelaajat-listan pelaajalle. -->
+    <div th:each="pelaaja : ${pelaajat}">
+        <!-- th:text tulostaa arvon HTML-tekstinä ja escapettaa erikoismerkit turvallisuuden vuoksi. -->
+        <h2 th:text="${pelaaja.nimi}">Nimi</h2>
+        <table border="1">
+            <tr><th>Pvm</th><th>Kenttä</th><th>Par</th><th>Lyönnit</th></tr>
+            <!-- Pelaaja.kierrokset tulee JPA-suhteesta; kierroskohtainen haku voi tehdä tietokantaan SELECTin. -->
+            <tr th:each="kierros : ${pelaaja.kierrokset}">
+                <td th:text="${kierros.pvm}"></td>
+                <td th:text="${kierros.kentta}"></td>
+                <td th:text="${kierros.par}"></td>
+                <td th:text="${kierros.lyonnit}"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
