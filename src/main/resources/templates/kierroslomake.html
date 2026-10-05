@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lisää kierros</title>
+</head>
+<body>
+    <h1>Lisää kierros</h1>
+
+    <form th:action="@{/kierros/tallenna}" th:object="${kierros}" method="post">
+        <label>Pelaaja:</label>
+        <select name="pelaajaId">
+            <option th:each="p : ${pelaajat}" th:value="${p.id}" th:text="${p.nimi}"></option>
+        </select>
+        <br>
+
+        <label>Päivämäärä:</label>
+        <input type="date" th:field="*{pvm}">
+        <br>
+
+        <label>Kenttä:</label>
+        <input type="text" th:field="*{kentta}">
+        <br>
+
+        <label>Par:</label>
+        <input type="number" th:field="*{par}">
+        <br>
+
+        <label>Lyönnit:</label>
+        <input type="number" th:field="*{lyonnit}">
+        <br>
+
+        <button type="submit">Tallenna</button>
+    </form>
+
+    <a th:href="@{/pelaajat}">Takaisin</a>
+</body>
+</html>

@@ -6,6 +6,8 @@
 </head>
 <body>
     <h1>Pelaajat ja kierrokset</h1>
+    
+    <a th:href="@{/kierros/uusi}">Lisää kierros</a>
 
     <!-- th:each toistaa lohkon jokaiselle Modelin pelaajat-listan pelaajalle. -->
     <div th:each="pelaaja : ${pelaajat}">
