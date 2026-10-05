@@ -1,15 +1,23 @@
+<!-- MVC-rooli: View. Sama lomake toimii sekä lisäykseen että muokkaukseen. -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Lisää kierros</title>
+    <title>Kierros</title>
 </head>
 <body>
-    <h1>Lisää kierros</h1>
+    <h1>Kierros</h1>
 
+    <!-- th:object sitoo lomakkeen controllerin Modeliin laittamaan Kierros-olioon -->
     <form th:action="@{/kierros/tallenna}" th:object="${kierros}" method="post">
+
+        <!-- Piilokenttä: uudella kierroksella id on tyhjä (INSERT), muokatessa id on olemassa (UPDATE) -->
+        <input type="hidden" th:field="*{id}">
+
         <label>Pelaaja:</label>
         <select name="pelaajaId">
-            <option th:each="p : ${pelaajat}" th:value="${p.id}" th:text="${p.nimi}"></option>
+            <!-- th:selected valitsee valmiiksi kierroksen nykyisen pelaajan muokatessa -->
+            <option th:each="p : ${pelaajat}" th:value="${p.id}" th:text="${p.nimi}"
+                    th:selected="${kierros.pelaaja != null and p.id == kierros.pelaaja.id}"></option>
         </select>
         <br>
 

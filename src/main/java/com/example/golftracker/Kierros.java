@@ -42,4 +42,5 @@ public class Kierros {
     public void setPar(int par) { this.par = par; }
     public Pelaaja getPelaaja() { return pelaaja; }
     public void setPelaaja(Pelaaja pelaaja) { this.pelaaja = pelaaja; }
+    public void setId(Long id) { this.id = id; }
 }
