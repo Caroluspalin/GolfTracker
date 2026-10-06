@@ -7,7 +7,12 @@
 <body>
     <h1>Pelaajat ja kierrokset</h1>
 
-    <a th:href="@{/kierros/uusi}">Lisää kierros</a>
+    <p>Kirjautuneena: <span th:text="${kayttaja}"></span></p>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">Kirjaudu ulos</button>
+        </form>
+
+    <a th:if="${onAdmin}" th:href="@{/kierros/uusi}">Lisää kierros</a>
 
     <!-- th:each käy läpi jokaisen pelaajan (vrt. Pythonin for-loop) -->
     <div th:each="pelaaja : ${pelaajat}">
@@ -22,8 +27,10 @@
                 <td th:text="${kierros.lyonnit}"></td>
                 <td>
                     <!-- {id} korvataan tämän kierroksen id:llä, esim. /kierros/muokkaa/3 -->
+                 <td th:if="${onAdmin}">
                     <a th:href="@{/kierros/muokkaa/{id}(id=${kierros.id})}">Muokkaa</a>
                     <a th:href="@{/kierros/poista/{id}(id=${kierros.id})}">Poista</a>
+                </td>
                 </td>
             </tr>
         </table>
