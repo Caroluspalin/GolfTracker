@@ -23,22 +23,29 @@ public class GolftrackerApplication {
 	@Bean
 public CommandLineRunner demoData(PelaajaRepository pRepo, KierrosRepository kRepo) {
     return args -> {
-        Pelaaja p1 = new Pelaaja("Palin");
-        Pelaaja p2 = new Pelaaja("Valtteri");
-        // save() tekee uusille olioille SQL INSERTin; id syntyy tietokannassa.
-        pRepo.save(p1);
-        pRepo.save(p2);
+        Pelaaja palin = pRepo.save(new Pelaaja("Palin"));
+        Pelaaja valtteri = pRepo.save(new Pelaaja("Valtteri"));
+        Pelaaja mikko = pRepo.save(new Pelaaja("Mikko"));
+        pRepo.save(new Pelaaja("Aino"));
 
-        // Kierros on Pelaajaan liittyvä rivi, joten tallennettaessa mukaan tulee pelaajan vierasavain.
-        Kierros k1 = new Kierros();
-        k1.setPvm(LocalDate.of(2026, 9, 20));
-        k1.setKentta("Tali");
-        k1.setPar(72);
-        k1.setLyonnit(88);
-        k1.setPelaaja(p1);
-        // Vastaa käytännössä INSERTiä kierros-tauluun, pelaaja_id viittaa Palin-riviin.
-        kRepo.save(k1);
+        kRepo.save(uusiKierros(palin, LocalDate.of(2026, 9, 20), "Tali", 72, 88));
+        kRepo.save(uusiKierros(palin, LocalDate.of(2026, 10, 7), "Master Golf", 72, 79));
+        kRepo.save(uusiKierros(palin, LocalDate.of(2026, 10, 18), "Espoo Golf", 71, 83));
+        kRepo.save(uusiKierros(valtteri, LocalDate.of(2026, 9, 28), "Tali", 72, 85));
+        kRepo.save(uusiKierros(valtteri, LocalDate.of(2026, 10, 12), "Hirsala", 72, 81));
+        kRepo.save(uusiKierros(mikko, LocalDate.of(2026, 10, 3), "Master Golf", 72, 95));
     };
+}
+
+// Apumetodi, ettei samoja settereitä tarvitse toistaa jokaiselle kierrokselle
+private static Kierros uusiKierros(Pelaaja pelaaja, LocalDate pvm, String kentta, int par, int lyonnit) {
+    Kierros k = new Kierros();
+    k.setPelaaja(pelaaja);
+    k.setPvm(pvm);
+    k.setKentta(kentta);
+    k.setPar(par);
+    k.setLyonnit(lyonnit);
+    return k;
 }
 
 }
