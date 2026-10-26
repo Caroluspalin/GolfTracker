@@ -32,11 +32,11 @@ public class PelaajaController {
     // Kirjautuneen käyttäjän nimi ja onAdmin tulevat Modeliin NavigaatioAdvicesta.
     @GetMapping("/pelaajat")
     public String pelaajalista(Model model, Authentication authentication) {
-        model.addAttribute("yhteenvedot", pelaajaService.yhteenvedot());
-
-        // Oman pelaajan id:n avulla näkymä näyttää muokkaus- ja poistonapit vain omille kierroksille.
-        // Tämä on vain käytettävyyttä: varsinainen oikeustarkistus tehdään KierrosServicessä.
-        model.addAttribute("omaPelaajaId", kayttajaService.haeKirjautunut(authentication).getPelaaja().getId());
+        // Oman pelaajan id:n avulla oma kortti nostetaan ylimmäksi ja näkymä näyttää muokkaus- ja poistonapit
+        // vain omille kierroksille. Napit ovat vain käytettävyyttä: varsinainen oikeustarkistus tehdään KierrosServicessä.
+        Long omaPelaajaId = kayttajaService.haeKirjautunut(authentication).getPelaaja().getId();
+        model.addAttribute("omaPelaajaId", omaPelaajaId);
+        model.addAttribute("yhteenvedot", pelaajaService.yhteenvedot(omaPelaajaId));
 
         return "pelaajalista";
     }

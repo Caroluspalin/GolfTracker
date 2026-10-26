@@ -1,6 +1,7 @@
 // MVC-rooli: testi. Varmistaa, että sivut ja tyylitiedosto näkyvät oikeille käyttäjille.
 package com.example.golftracker;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -56,6 +57,15 @@ class SivutTest {
                 .andExpect(content().string(containsString("Kirjaudu ulos")))
                 .andExpect(content().string(containsString("Keskiarvo pariin")))
                 .andExpect(content().string(containsString("Sinä")));
+    }
+
+    @Test
+    void omaPelaajakorttiOnYlimpana() throws Exception {
+        // "user" on pelaaja Valtteri. Testidatassa Palin on luotu ensin, mutta Valtterin kortin pitää tulla ensimmäisenä.
+        String html = mockMvc.perform(get("/pelaajat").with(user("user").roles("USER")))
+                .andReturn().getResponse().getContentAsString();
+
+        assertThat(html.indexOf(">Valtteri<")).isPositive().isLessThan(html.indexOf(">Palin<"));
     }
 
     @Test
