@@ -1,0 +1,41 @@
+<!-- MVC-rooli: View. Oma kirjautumissivu, joka korvaa Spring Securityn oletussivun. -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Kirjaudu')}"></head>
+<body class="auth">
+    <main class="auth__wrap">
+        <div class="auth__brand">
+            <a th:replace="~{fragments :: logo}"></a>
+            <p>Pidä kirjaa golfkierroksistasi.</p>
+        </div>
+
+        <div class="card auth__card">
+            <h1>Kirjaudu sisään</h1>
+
+            <!-- Spring Security ohjaa takaisin tälle sivulle URL-parametrin kanssa: ?error, ?logout.
+                 ?rekisteroity tulee RekisterointiControllerista. ${param.x} lukee URL-parametrin. -->
+            <div class="alert alert--error" th:if="${param.error}">Väärä käyttäjänimi tai salasana.</div>
+            <div class="alert alert--success" th:if="${param.logout}">Olet kirjautunut ulos.</div>
+            <div class="alert alert--success" th:if="${param.rekisteroity}">Tunnukset luotu! Kirjaudu sisään.</div>
+
+            <!-- POST /login käsitellään Spring Securityssä. Kenttien nimien on oltava username ja password.
+                 th:action lisää lomakkeeseen CSRF-tokenin. -->
+            <form class="form" th:action="@{/login}" method="post">
+                <div class="field">
+                    <label for="username">Käyttäjänimi</label>
+                    <input type="text" id="username" name="username" autocomplete="username" required autofocus>
+                </div>
+                <div class="field">
+                    <label for="password">Salasana</label>
+                    <input type="password" id="password" name="password" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="btn btn--primary btn--block">Kirjaudu</button>
+            </form>
+
+            <p class="auth__switch">Eikö sinulla ole tunnuksia? <a th:href="@{/rekisteroidy}">Rekisteröidy</a></p>
+        </div>
+
+        <p class="auth__hint">Testitunnukset: user / user tai admin / admin</p>
+    </main>
+</body>
+</html>
