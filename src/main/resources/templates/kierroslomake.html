@@ -1,57 +1,75 @@
 <!-- MVC-rooli: View. Sama lomake toimii sekä lisäykseen että muokkaukseen. -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Kierros</title>
-</head>
+<head th:replace="~{fragments :: head('Kierros')}"></head>
 <body>
-    <!-- Otsikko riippuu siitä, onko kierroksella jo id (muokkaus) vai ei (uusi) -->
-    <h1 th:text="${kierros.id == null} ? 'Uusi kierros' : 'Muokkaa kierrosta'">Kierros</h1>
+    <header th:replace="~{fragments :: navbar('kierros')}"></header>
 
-    <!-- th:object sitoo lomakkeen controllerin Modeliin laittamaan Kierros-olioon -->
-    <form th:action="@{/kierros/tallenna}" th:object="${kierros}" method="post">
+    <main class="container container--narrow">
+        <a class="back-link" th:href="@{/pelaajat}">← Takaisin pelaajiin</a>
 
-        <!-- Yleiset virheet, jotka eivät liity yhteen kenttään (esim. "Valitse pelaaja") -->
-        <p th:if="${#fields.hasGlobalErrors()}" th:each="virhe : ${#fields.globalErrors()}" th:text="${virhe}"></p>
+        <div class="card form-card">
+            <!-- Otsikko riippuu siitä, onko kierroksella jo id (muokkaus) vai ei (uusi) -->
+            <h1 th:text="${kierros.id == null} ? 'Uusi kierros' : 'Muokkaa kierrosta'">Kierros</h1>
+            <p class="muted" th:text="${onAdmin} ? 'Adminina voit tallentaa kierroksen kenelle tahansa pelaajalle.' : 'Kierros tallennetaan omaan profiiliisi.'"></p>
 
-        <!-- Piilokenttä: uudella kierroksella id on tyhjä (INSERT), muokatessa id on olemassa (UPDATE) -->
-        <input type="hidden" th:field="*{id}">
+            <!-- th:object sitoo lomakkeen controllerin Modeliin laittamaan Kierros-olioon -->
+            <form class="form" th:action="@{/kierros/tallenna}" th:object="${kierros}" method="post">
 
-        <!-- Pelaajavalinta näytetään vain adminille. Tavallisen käyttäjän kierros liitetään palvelimella hänen omaan pelaajaansa. -->
-        <th:block th:if="${onAdmin}">
-            <label>Pelaaja:</label>
-            <select name="pelaajaId">
-                <!-- th:selected valitsee valmiiksi kierroksen nykyisen pelaajan muokatessa -->
-                <option th:each="p : ${pelaajat}" th:value="${p.id}" th:text="${p.nimi}"
-                        th:selected="${p.id == valittuPelaajaId}"></option>
-            </select>
-            <br>
-        </th:block>
+                <!-- Yleiset virheet, jotka eivät liity yhteen kenttään (esim. "Valitse pelaaja") -->
+                <div class="alert alert--error" th:if="${#fields.hasGlobalErrors()}">
+                    <p th:each="virhe : ${#fields.globalErrors()}" th:text="${virhe}"></p>
+                </div>
 
-        <label>Päivämäärä:</label>
-        <input type="date" th:field="*{pvm}">
-        <!-- th:errors näyttää kentän validointivirheet (viestit tulevat Kierros-luokan annotaatioista) -->
-        <span th:if="${#fields.hasErrors('pvm')}" th:errors="*{pvm}"></span>
-        <br>
+                <!-- Piilokenttä: uudella kierroksella id on tyhjä (INSERT), muokatessa id on olemassa (UPDATE) -->
+                <input type="hidden" th:field="*{id}">
 
-        <label>Kenttä:</label>
-        <input type="text" th:field="*{kentta}">
-        <span th:if="${#fields.hasErrors('kentta')}" th:errors="*{kentta}"></span>
-        <br>
+                <!-- Pelaajavalinta näytetään vain adminille. Tavallisen käyttäjän kierros liitetään palvelimella hänen omaan pelaajaansa. -->
+                <div class="field" th:if="${onAdmin}">
+                    <label for="pelaajaId">Pelaaja</label>
+                    <select id="pelaajaId" name="pelaajaId">
+                        <!-- th:selected valitsee valmiiksi kierroksen nykyisen pelaajan muokatessa -->
+                        <option th:each="p : ${pelaajat}" th:value="${p.id}" th:text="${p.nimi}"
+                                th:selected="${p.id == valittuPelaajaId}"></option>
+                    </select>
+                </div>
 
-        <label>Par:</label>
-        <input type="number" th:field="*{par}">
-        <span th:if="${#fields.hasErrors('par')}" th:errors="*{par}"></span>
-        <br>
+                <!-- th:field luo kentälle id:n ja name:n (esim. id="pvm"), joten label for="pvm" osuu oikeaan kenttään.
+                     th:errorclass lisää luokan is-invalid, jos kentässä on validointivirhe. -->
+                <div class="field">
+                    <label for="pvm">Päivämäärä</label>
+                    <!-- max estää selaimessa tulevat päivät; palvelin tarkistaa saman @PastOrPresent-annotaatiolla -->
+                    <input type="date" th:field="*{pvm}" th:errorclass="is-invalid"
+                           th:max="${#temporals.format(#temporals.createToday(), 'yyyy-MM-dd')}">
+                    <!-- th:errors näyttää kentän validointivirheet (viestit tulevat Kierros-luokan annotaatioista) -->
+                    <p class="field-error" th:if="${#fields.hasErrors('pvm')}" th:errors="*{pvm}"></p>
+                </div>
 
-        <label>Lyönnit:</label>
-        <input type="number" th:field="*{lyonnit}">
-        <span th:if="${#fields.hasErrors('lyonnit')}" th:errors="*{lyonnit}"></span>
-        <br>
+                <div class="field">
+                    <label for="kentta">Kenttä</label>
+                    <input type="text" th:field="*{kentta}" th:errorclass="is-invalid" placeholder="esim. Tali">
+                    <p class="field-error" th:if="${#fields.hasErrors('kentta')}" th:errors="*{kentta}"></p>
+                </div>
 
-        <button type="submit">Tallenna</button>
-    </form>
+                <div class="field-row">
+                    <div class="field">
+                        <label for="par">Par</label>
+                        <input type="number" th:field="*{par}" th:errorclass="is-invalid" min="54" max="80" placeholder="72">
+                        <p class="field-error" th:if="${#fields.hasErrors('par')}" th:errors="*{par}"></p>
+                    </div>
+                    <div class="field">
+                        <label for="lyonnit">Lyönnit</label>
+                        <input type="number" th:field="*{lyonnit}" th:errorclass="is-invalid" min="18" max="200">
+                        <p class="field-error" th:if="${#fields.hasErrors('lyonnit')}" th:errors="*{lyonnit}"></p>
+                    </div>
+                </div>
 
-    <a th:href="@{/pelaajat}">Takaisin</a>
+                <div class="form-actions">
+                    <a class="btn btn--ghost" th:href="@{/pelaajat}">Peruuta</a>
+                    <button type="submit" class="btn btn--primary">Tallenna</button>
+                </div>
+            </form>
+        </div>
+    </main>
 </body>
 </html>

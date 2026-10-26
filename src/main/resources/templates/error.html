@@ -1,0 +1,31 @@
+<!-- MVC-rooli: View. Spring Bootin virhesivu: Boot näyttää tämän automaattisesti esim. 403- ja 404-virheissä.
+     Boot antaa Modeliin mm. status-arvon (virhekoodi). -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Virhe')}"></head>
+<body>
+    <header th:replace="~{fragments :: navbar('')}"></header>
+
+    <main class="container container--narrow">
+        <div class="card error-card">
+            <p class="error-code" th:text="${status}">404</p>
+            <!-- th:switch / th:case toimii kuten Javan switch -->
+            <th:block th:switch="${status}">
+                <th:block th:case="403">
+                    <h1>Ei käyttöoikeutta</h1>
+                    <p class="muted">Voit muokata ja poistaa vain omia kierroksiasi.</p>
+                </th:block>
+                <th:block th:case="404">
+                    <h1>Sivua ei löytynyt</h1>
+                    <p class="muted">Etsimääsi sivua tai kierrosta ei ole olemassa.</p>
+                </th:block>
+                <th:block th:case="*">
+                    <h1>Jotain meni pieleen</h1>
+                    <p class="muted">Yritä hetken päästä uudelleen.</p>
+                </th:block>
+            </th:block>
+            <a class="btn btn--primary" th:href="@{/pelaajat}">Takaisin pelaajiin</a>
+        </div>
+    </main>
+</body>
+</html>

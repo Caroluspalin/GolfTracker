@@ -82,11 +82,10 @@ public class KierrosController {
     }
 
     // Lomakkeen yhteiset tiedot: admin näkee pelaajavalinnan, tavallinen käyttäjä ei.
+    // (onAdmin-arvo näkymää varten tulee Modeliin NavigaatioAdvicesta.)
     private void lisaaLomakkeenTiedot(Model model, Authentication authentication, Long valittuPelaajaId) {
-        boolean onAdmin = KayttajaService.onAdmin(authentication);
-        model.addAttribute("onAdmin", onAdmin);
         model.addAttribute("valittuPelaajaId", valittuPelaajaId);
-        if (onAdmin) {
+        if (KayttajaService.onAdmin(authentication)) {
             model.addAttribute("pelaajat", kierrosService.kaikkiPelaajat());
         }
     }

@@ -1,0 +1,53 @@
+<!-- MVC-rooli: View (fragmentit). Yhteiset palat, jotka muut sivut ottavat käyttöön th:replace-attribuutilla.
+     Näin head-osio, logo ja navigaatiopalkki kirjoitetaan vain kerran. -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- Yhteinen head. Parametri otsikko näkyy selaimen välilehdellä, esim. head('Pelaajat'). -->
+<head th:fragment="head(otsikko)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${otsikko} + ' · Golftracker'">Golftracker</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/img/favicon.svg}">
+    <!-- @{...} lisää polun eteen sovelluksen juuren automaattisesti -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<!-- Logo: lippu ja nimi. Käytetään navigaatiossa ja login-/rekisteröitymissivuilla. -->
+<a th:fragment="logo" class="logo" th:href="@{/pelaajat}">
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="16" fill="#1d8259"/>
+        <path d="M13 7v17" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        <path d="M13 7.5l9 3.5-9 3.5z" fill="#f3ead6"/>
+        <ellipse cx="16" cy="24.5" rx="7" ry="1.8" fill="#0e3b29" opacity=".45"/>
+    </svg>
+    <span>Golftracker</span>
+</a>
+
+<!-- Navigaatiopalkki. Parametri aktiivinen kertoo, mikä linkki korostetaan (esim. navbar('pelaajat')).
+     kirjautunut ja onAdmin tulevat Modeliin NavigaatioAdvicesta jokaiselle sivulle. -->
+<header th:fragment="navbar(aktiivinen)" class="nav">
+    <div class="nav__sisalto">
+        <a th:replace="~{fragments :: logo}"></a>
+
+        <nav class="nav__linkit" th:if="${kirjautunut != null}">
+            <!-- th:classappend lisää luokan vain, jos ehto on tosi -->
+            <a th:href="@{/pelaajat}" th:classappend="${aktiivinen == 'pelaajat'} ? 'aktiivinen'">Pelaajat</a>
+            <a th:href="@{/kierros/uusi}" th:classappend="${aktiivinen == 'kierros'} ? 'aktiivinen'">Lisää kierros</a>
+        </nav>
+
+        <div class="nav__kayttaja" th:if="${kirjautunut != null}">
+            <span class="nav__nimi" th:text="${kirjautunut}">käyttäjä</span>
+            <span class="badge badge--admin" th:if="${onAdmin}">Admin</span>
+            <!-- Uloskirjautuminen on POST-lomake, koska Spring Security vaatii siihen CSRF-tokenin -->
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn--nav">Kirjaudu ulos</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+</body>
+</html>

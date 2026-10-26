@@ -1,0 +1,511 @@
+/* Golftracker – koko sovelluksen ulkoasu yhdessä tiedostossa.
+   Spring Boot jakaa static-kansion tiedostot suoraan: tämä löytyy osoitteesta /css/style.css.
+   Rakenne: 1) värit ja muuttujat, 2) perusasetukset, 3) navigaatio, 4) yleiset osat (napit, kortit),
+   5) pelaajalista, 6) lomakkeet, 7) login/rekisteröityminen, 8) virhesivu, 9) mobiili. */
+
+/* ---------- 1. Värit ja muuttujat ----------
+   CSS-muuttujat (custom properties) määritellään kerran :root-tasolla ja käytetään var(--nimi). */
+:root {
+    --vihrea-900: #0e3b29;
+    --vihrea-800: #135237;
+    --vihrea-700: #17694a;
+    --vihrea-600: #1d8259;
+    --vihrea-100: #dcefe3;
+    --vihrea-50: #eff7f2;
+
+    --tausta: #f4f6f1;
+    --pinta: #ffffff;
+    --teksti: #17241d;
+    --teksti-heikko: #5b6a61;
+    --reuna: #dde4de;
+
+    --punainen: #b4361f;
+    --punainen-50: #fcebe7;
+    --hiekka: #f3ead6;
+
+    --kulma: 14px;
+    --varjo: 0 1px 2px rgba(14, 59, 41, 0.06), 0 4px 16px rgba(14, 59, 41, 0.06);
+    --fontti: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ---------- 2. Perusasetukset ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box; /* padding ja reunat lasketaan mukaan leveyteen */
+}
+
+body {
+    margin: 0;
+    font-family: var(--fontti);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--teksti);
+    background: var(--tausta);
+}
+
+h1, h2, h3 {
+    margin: 0;
+    line-height: 1.2;
+    color: var(--vihrea-900);
+    letter-spacing: -0.01em;
+}
+
+h1 { font-size: 1.85rem; font-weight: 700; }
+h2 { font-size: 1.2rem; font-weight: 650; }
+
+a { color: var(--vihrea-700); }
+
+.muted { color: var(--teksti-heikko); margin: 0.35rem 0 0; }
+
+.container {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+}
+
+.container--narrow { max-width: 560px; }
+
+/* ---------- 3. Navigaatiopalkki ---------- */
+.nav {
+    background: var(--vihrea-900);
+    color: #fff;
+    position: sticky; /* palkki pysyy ylhäällä vieritettäessä */
+    top: 0;
+    z-index: 10;
+}
+
+.nav__sisalto {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0.75rem 1.25rem;
+    display: flex; /* flexbox asettaa logon, linkit ja käyttäjän samalle riville */
+    align-items: center;
+    gap: 2rem;
+}
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: inherit;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+}
+
+.logo svg { width: 30px; height: 30px; flex-shrink: 0; }
+
+.nav__linkit { display: flex; gap: 0.25rem; }
+
+.nav__linkit a {
+    color: rgba(255, 255, 255, 0.78);
+    text-decoration: none;
+    padding: 0.45rem 0.8rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.nav__linkit a:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+.nav__linkit a.aktiivinen { color: #fff; background: rgba(255, 255, 255, 0.14); }
+
+.nav__kayttaja {
+    margin-left: auto; /* työntää käyttäjäosion oikeaan reunaan */
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.nav__kayttaja form { margin: 0; }
+
+/* ---------- 4. Yleiset osat: napit, kortit, merkit, ilmoitukset ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.65rem 1.15rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.btn--primary { background: var(--vihrea-600); color: #fff; }
+.btn--primary:hover { background: var(--vihrea-700); }
+
+.btn--ghost { background: transparent; color: var(--vihrea-800); border-color: var(--reuna); }
+.btn--ghost:hover { background: var(--vihrea-50); border-color: var(--vihrea-100); }
+
+.btn--nav { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.3); padding: 0.45rem 0.9rem; }
+.btn--nav:hover { background: rgba(255, 255, 255, 0.1); }
+
+.btn--small { padding: 0.35rem 0.7rem; font-size: 0.85rem; border-radius: 8px; }
+
+.btn--danger { background: transparent; color: var(--punainen); border-color: transparent; }
+.btn--danger:hover { background: var(--punainen-50); }
+
+.btn--block { width: 100%; }
+
+/* Näkyvä fokusreunus näppäimistökäyttäjille */
+.btn:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid var(--vihrea-100);
+    outline-offset: 2px;
+}
+
+.card {
+    background: var(--pinta);
+    border: 1px solid var(--reuna);
+    border-radius: var(--kulma);
+    box-shadow: var(--varjo);
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    background: var(--vihrea-100);
+    color: var(--vihrea-800);
+}
+
+.badge--admin { background: var(--hiekka); color: #6b4e12; }
+
+.alert {
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.25rem;
+    font-size: 0.95rem;
+}
+
+.alert p { margin: 0; }
+.alert--error { background: var(--punainen-50); color: var(--punainen); }
+.alert--success { background: var(--vihrea-50); color: var(--vihrea-800); border: 1px solid var(--vihrea-100); }
+
+/* ---------- 5. Pelaajalista ---------- */
+.page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.player-list {
+    display: grid; /* grid asettaa pelaajakortit allekkain tasaisin välein */
+    /* minmax(0, 1fr): kortti saa kaventua näytön levyiseksi, jolloin leveä taulukko vierii kortin sisällä
+       eikä levitä koko sivua (oletuksena grid-solu on vähintään sisältönsä levyinen) */
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+}
+
+.player { padding: 1.5rem; }
+
+/* Oma pelaajakortti korostetaan vihreällä reunalla */
+.player--own { border-color: var(--vihrea-600); box-shadow: 0 0 0 1px var(--vihrea-600), var(--varjo); }
+
+.player__header {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+}
+
+.avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--vihrea-100);
+    color: var(--vihrea-800);
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* kolme yhtä leveää tilastoruutua */
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.stat {
+    background: var(--vihrea-50);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.stat__label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--teksti-heikko);
+}
+
+.stat__value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--vihrea-900);
+    font-variant-numeric: tabular-nums; /* numerot yhtä leveitä, jolloin ne asettuvat siististi */
+}
+
+.stat__value small { font-size: 0.95rem; font-weight: 600; color: var(--vihrea-700); }
+.stat__hint { font-size: 0.85rem; color: var(--teksti-heikko); }
+
+/* Taulukko vierii vaakasuunnassa kapealla näytöllä sen sijaan, että koko sivu leviäisi */
+.table-wrap { overflow-x: auto; }
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.table th {
+    text-align: left;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--teksti-heikko);
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--reuna);
+}
+
+.table td {
+    padding: 0.7rem 0.75rem;
+    border-bottom: 1px solid var(--reuna);
+    white-space: nowrap;
+}
+
+.table tr:last-child td { border-bottom: none; }
+.table tbody tr:hover { background: var(--vihrea-50); }
+
+.table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.table .actions { text-align: right; }
+.table .actions form { display: inline; margin: 0; }
+
+/* Tulos suhteessa pariin: par tai alle vihreällä, yli parin neutraalina */
+.score {
+    display: inline-block;
+    min-width: 2.6rem;
+    text-align: center;
+    padding: 0.1rem 0.45rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    background: var(--tausta);
+    color: var(--teksti-heikko);
+}
+
+.score--good { background: var(--vihrea-100); color: var(--vihrea-800); }
+
+.empty {
+    margin: 0;
+    padding: 1.25rem;
+    text-align: center;
+    color: var(--teksti-heikko);
+    background: var(--tausta);
+    border-radius: 10px;
+}
+
+/* ---------- 6. Lomakkeet ---------- */
+.back-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-link:hover { text-decoration: underline; }
+
+.form-card { padding: 2rem; }
+.form-card h1 { margin-bottom: 0.25rem; }
+
+.form { margin-top: 1.5rem; }
+
+.field { margin-bottom: 1.15rem; }
+
+.field label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+.field input,
+.field select {
+    width: 100%;
+    padding: 0.7rem 0.85rem;
+    font: inherit;
+    color: var(--teksti);
+    background: var(--pinta);
+    border: 1px solid var(--reuna);
+    border-radius: 10px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field input:focus,
+.field select:focus {
+    border-color: var(--vihrea-600);
+    box-shadow: 0 0 0 3px var(--vihrea-100);
+    outline: none;
+}
+
+/* Thymeleafin th:errorclass lisää tämän luokan kenttään, jossa on validointivirhe */
+.field input.is-invalid { border-color: var(--punainen); }
+.field input.is-invalid:focus { box-shadow: 0 0 0 3px var(--punainen-50); }
+
+.field-error {
+    margin: 0.35rem 0 0;
+    color: var(--punainen);
+    font-size: 0.88rem;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* par ja lyönnit vierekkäin */
+    gap: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+}
+
+/* ---------- 7. Login ja rekisteröityminen ---------- */
+.auth {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.25rem;
+    /* Kaksi päällekkäistä liukuväriä: vaalea "green" ylhäällä ja tummempi väylä alhaalla */
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.14), transparent 60%),
+        linear-gradient(160deg, var(--vihrea-700), var(--vihrea-900));
+}
+
+.auth__wrap { width: 100%; max-width: 420px; }
+
+.auth__brand {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 1.5rem;
+}
+
+.auth__brand .logo { font-size: 1.6rem; }
+.auth__brand .logo svg { width: 40px; height: 40px; }
+.auth__brand p { margin: 0.4rem 0 0; color: rgba(255, 255, 255, 0.75); }
+
+.auth__card { padding: 2rem; }
+.auth__card .form { margin-top: 1.25rem; }
+.auth__card .alert { margin: 1rem 0 0; }
+
+.auth__switch {
+    margin: 1.5rem 0 0;
+    text-align: center;
+    color: var(--teksti-heikko);
+    font-size: 0.95rem;
+}
+
+.auth__switch a { font-weight: 600; }
+
+.auth__hint {
+    margin: 1.25rem 0 0;
+    text-align: center;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ---------- 8. Virhesivu ---------- */
+.error-card { padding: 2.5rem 2rem; text-align: center; }
+
+.error-code {
+    margin: 0 0 0.5rem;
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #b5d9c3;
+}
+
+.error-card .btn { margin-top: 1.5rem; }
+
+/* ---------- 9. Mobiili ----------
+   @media-sääntö on voimassa vain, kun näyttö on enintään 640px leveä. */
+@media (max-width: 640px) {
+    .container { padding: 1.5rem 1rem 3rem; }
+    h1 { font-size: 1.5rem; }
+
+    .nav__sisalto { flex-wrap: wrap; gap: 0.5rem 1rem; padding: 0.65rem 1rem; }
+    .nav__linkit { order: 3; width: 100%; } /* linkit omalle rivilleen logon ja käyttäjän alle */
+    .nav__nimi { display: none; }
+
+    .page-header { flex-direction: column; align-items: stretch; }
+
+    .player { padding: 1.1rem; }
+
+    .stats { gap: 0.5rem; }
+    .stat { padding: 0.65rem 0.7rem; }
+    .stat__value { font-size: 1.25rem; }
+    .stat__hint { display: none; }
+
+    .stat__label { font-size: 0.68rem; }
+
+    /* Responsiivinen taulukko: puhelimessa sarakkeet eivät mahdu vierekkäin, joten jokainen rivi
+       näytetään pienenä korttina. grid-template-areas nimeää alueet, ja jokainen solu sijoitetaan omalle alueelleen:
+         kenttä    tulos
+         pvm       lyönnit
+         napit     napit                                                                    */
+    .table thead { display: none; }
+    .table,
+    .table tbody { display: block; }
+
+    .table tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "kentta tulos"
+            "pvm lyonnit"
+            "actions actions";
+        gap: 0.15rem 1rem;
+        padding: 0.8rem 0.25rem;
+        border-bottom: 1px solid var(--reuna);
+    }
+
+    .table tbody tr:last-child { border-bottom: none; }
+    .table td { padding: 0; border: none; }
+
+    .table .col-kentta { grid-area: kentta; font-weight: 600; }
+    .table .col-tulos { grid-area: tulos; }
+    .table .col-pvm { grid-area: pvm; color: var(--teksti-heikko); font-size: 0.88rem; }
+    .table .col-lyonnit { grid-area: lyonnit; color: var(--teksti-heikko); font-size: 0.88rem; }
+    .table .col-lyonnit::after { content: " lyöntiä"; } /* ::after lisää tekstin CSS:llä, koska otsikkorivi on piilossa */
+    .table .col-par { display: none; } /* par näkyy jo tuloksessa (+/-) */
+    .table .actions { grid-area: actions; text-align: left; margin-top: 0.45rem; }
+
+    .form-card,
+    .auth__card { padding: 1.5rem 1.25rem; }
+}
