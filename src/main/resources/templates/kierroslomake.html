@@ -5,36 +5,48 @@
     <title>Kierros</title>
 </head>
 <body>
-    <h1>Kierros</h1>
+    <!-- Otsikko riippuu siitä, onko kierroksella jo id (muokkaus) vai ei (uusi) -->
+    <h1 th:text="${kierros.id == null} ? 'Uusi kierros' : 'Muokkaa kierrosta'">Kierros</h1>
 
     <!-- th:object sitoo lomakkeen controllerin Modeliin laittamaan Kierros-olioon -->
     <form th:action="@{/kierros/tallenna}" th:object="${kierros}" method="post">
 
+        <!-- Yleiset virheet, jotka eivät liity yhteen kenttään (esim. "Valitse pelaaja") -->
+        <p th:if="${#fields.hasGlobalErrors()}" th:each="virhe : ${#fields.globalErrors()}" th:text="${virhe}"></p>
+
         <!-- Piilokenttä: uudella kierroksella id on tyhjä (INSERT), muokatessa id on olemassa (UPDATE) -->
         <input type="hidden" th:field="*{id}">
 
-        <label>Pelaaja:</label>
-        <select name="pelaajaId">
-            <!-- th:selected valitsee valmiiksi kierroksen nykyisen pelaajan muokatessa -->
-            <option th:each="p : ${pelaajat}" th:value="${p.id}" th:text="${p.nimi}"
-                    th:selected="${kierros.pelaaja != null and p.id == kierros.pelaaja.id}"></option>
-        </select>
-        <br>
+        <!-- Pelaajavalinta näytetään vain adminille. Tavallisen käyttäjän kierros liitetään palvelimella hänen omaan pelaajaansa. -->
+        <th:block th:if="${onAdmin}">
+            <label>Pelaaja:</label>
+            <select name="pelaajaId">
+                <!-- th:selected valitsee valmiiksi kierroksen nykyisen pelaajan muokatessa -->
+                <option th:each="p : ${pelaajat}" th:value="${p.id}" th:text="${p.nimi}"
+                        th:selected="${p.id == valittuPelaajaId}"></option>
+            </select>
+            <br>
+        </th:block>
 
         <label>Päivämäärä:</label>
         <input type="date" th:field="*{pvm}">
+        <!-- th:errors näyttää kentän validointivirheet (viestit tulevat Kierros-luokan annotaatioista) -->
+        <span th:if="${#fields.hasErrors('pvm')}" th:errors="*{pvm}"></span>
         <br>
 
         <label>Kenttä:</label>
         <input type="text" th:field="*{kentta}">
+        <span th:if="${#fields.hasErrors('kentta')}" th:errors="*{kentta}"></span>
         <br>
 
         <label>Par:</label>
         <input type="number" th:field="*{par}">
+        <span th:if="${#fields.hasErrors('par')}" th:errors="*{par}"></span>
         <br>
 
         <label>Lyönnit:</label>
         <input type="number" th:field="*{lyonnit}">
+        <span th:if="${#fields.hasErrors('lyonnit')}" th:errors="*{lyonnit}"></span>
         <br>
 
         <button type="submit">Tallenna</button>

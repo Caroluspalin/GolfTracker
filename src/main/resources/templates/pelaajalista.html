@@ -8,30 +8,39 @@
     <h1>Pelaajat ja kierrokset</h1>
 
     <p>Kirjautuneena: <span th:text="${kayttaja}"></span></p>
-        <form th:action="@{/logout}" method="post">
-            <button type="submit">Kirjaudu ulos</button>
-        </form>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Kirjaudu ulos</button>
+    </form>
 
-    <a th:if="${onAdmin}" th:href="@{/kierros/uusi}">Lisää kierros</a>
+    <!-- Jokainen kirjautunut voi lisätä kierroksen; tavallinen käyttäjä lisää sen itselleen -->
+    <a th:href="@{/kierros/uusi}">Lisää kierros</a>
 
     <!-- th:each käy läpi jokaisen pelaajan (vrt. Pythonin for-loop) -->
     <div th:each="pelaaja : ${pelaajat}">
+        <!-- th:with luo apumuuttujan: saako kirjautunut käyttäjä hallita tämän pelaajan kierroksia -->
+        <th:block th:with="saaMuokata=${onAdmin or pelaaja.id == omaPelaajaId}">
         <h2 th:text="${pelaaja.nimi}">Nimi</h2>
-       <table border="1">
-        <tr><th>Pvm</th><th>Kenttä</th><th>Par</th><th>Lyönnit</th><th th:if="${onAdmin}"></th></tr>
-        <!-- pelaaja.kierrokset tulee OneToMany-suhteesta (kutsuu getKierrokset()) -->
-        <tr th:each="kierros : ${pelaaja.kierrokset}">
-            <td th:text="${kierros.pvm}"></td>
-            <td th:text="${kierros.kentta}"></td>
-            <td th:text="${kierros.par}"></td>
-            <td th:text="${kierros.lyonnit}"></td>
-            <!-- {id} korvataan tämän kierroksen id:llä, esim. /kierros/muokkaa/3 -->
-            <td th:if="${onAdmin}">
-                <a th:href="@{/kierros/muokkaa/{id}(id=${kierros.id})}">Muokkaa</a>
-                <a th:href="@{/kierros/poista/{id}(id=${kierros.id})}">Poista</a>
-            </td>
-        </tr>
-    </table>
+        <table border="1">
+            <tr><th>Pvm</th><th>Kenttä</th><th>Par</th><th>Lyönnit</th><th th:if="${saaMuokata}"></th></tr>
+            <!-- pelaaja.kierrokset tulee OneToMany-suhteesta (kutsuu getKierrokset()) -->
+            <tr th:each="kierros : ${pelaaja.kierrokset}">
+                <td th:text="${kierros.pvm}"></td>
+                <td th:text="${kierros.kentta}"></td>
+                <td th:text="${kierros.par}"></td>
+                <td th:text="${kierros.lyonnit}"></td>
+                <!-- Napit näytetään vain omille kierroksille (tai adminille). Palvelin tarkistaa oikeuden silti uudelleen. -->
+                <td th:if="${saaMuokata}">
+                    <!-- {id} korvataan tämän kierroksen id:llä, esim. /kierros/muokkaa/3 -->
+                    <a th:href="@{/kierros/muokkaa/{id}(id=${kierros.id})}">Muokkaa</a>
+                    <!-- Poisto on POST-lomake: th:action lisää CSRF-tokenin automaattisesti -->
+                    <form th:action="@{/kierros/poista/{id}(id=${kierros.id})}" method="post" style="display:inline"
+                          onsubmit="return confirm('Poistetaanko kierros?');">
+                        <button type="submit">Poista</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+        </th:block>
     </div>
 </body>
 </html>

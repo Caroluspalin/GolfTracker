@@ -10,24 +10,26 @@ import org.springframework.security.core.Authentication;
 @Controller
 public class PelaajaController {
 
-    // Spring injektoi repositoryn konstruktorin kautta; näin controller ei rakenna tietokantakerrosta itse.
+    // Spring injektoi riippuvuudet konstruktorin kautta; näin controller ei rakenna tietokantakerrosta itse.
     private final PelaajaRepository pelaajaRepository;
+    private final KayttajaService kayttajaService;
 
-    public PelaajaController(PelaajaRepository pelaajaRepository) {
+    public PelaajaController(PelaajaRepository pelaajaRepository, KayttajaService kayttajaService) {
         this.pelaajaRepository = pelaajaRepository;
+        this.kayttajaService = kayttajaService;
     }
 
     // @GetMapping yhdistää GET-pyynnön /pelaajat-osoitteeseen.
     // findAll() tuottaa JPA:n kautta pelaajien SELECT-kyselyn, ja tulos annetaan Thymeleafille.
-   @GetMapping("/pelaajat")
+    @GetMapping("/pelaajat")
     public String pelaajalista(Model model, Authentication authentication) {
         model.addAttribute("pelaajat", pelaajaRepository.findAll());
 
-        // Tarkistetaan onko kirjautuneella käyttäjällä ADMIN-rooli
-        boolean onAdmin = authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-        model.addAttribute("onAdmin", onAdmin);
+        model.addAttribute("onAdmin", KayttajaService.onAdmin(authentication));
         model.addAttribute("kayttaja", authentication.getName());
+        // Oman pelaajan id:n avulla näkymä näyttää muokkaus- ja poistonapit vain omille kierroksille.
+        // Tämä on vain käytettävyyttä: varsinainen oikeustarkistus tehdään KierrosServicessä.
+        model.addAttribute("omaPelaajaId", kayttajaService.haeKirjautunut(authentication).getPelaaja().getId());
 
         return "pelaajalista";
     }

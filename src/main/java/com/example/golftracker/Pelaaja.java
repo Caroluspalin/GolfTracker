@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import java.util.List;
 
 // @Entity merkitsee luokan JPA:lle tallennettavaksi; Hibernate luo tai päivittää vastaavan taulun.
@@ -24,6 +25,8 @@ public class Pelaaja {
     // mappedBy kertoo, että omistava puoli on Kierros.pelaaja; erillistä liitostaulua ei tarvita,
     // vaan pelaaja_id-vierasavain sijaitsee kierros-taulussa. ALL välittää pelaajan tallennuksen ja poiston kierroksille.
     @OneToMany(mappedBy = "pelaaja", cascade = CascadeType.ALL)
+    // @OrderBy järjestää kierrokset tietokantakyselyssä: uusin kierros ensin.
+    @OrderBy("pvm DESC")
     private List<Kierros> kierrokset;
 
     // JPA käyttää tyhjää konstruktoria luodessaan Pelaaja-olion tietokantarivistä.
