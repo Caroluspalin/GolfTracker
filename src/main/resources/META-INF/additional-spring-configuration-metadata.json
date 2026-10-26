@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "golftracker.demo-data",
+      "type": "java.lang.Boolean",
+      "description": "Luodaanko käynnistyksessä testikäyttäjät ja -kierrokset tyhjään tietokantaan. Dev-profiilissa true, prod-profiilissa DEMO_DATA-ympäristömuuttujan mukaan (oletus false).",
+      "defaultValue": false
+    }
+  ]
+}
