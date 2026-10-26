@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 
 // Yhdistää Spring Bootin asetukset, automaattimääritykset ja komponenttien etsinnän tästä paketista.
@@ -27,7 +28,10 @@ public class GolftrackerApplication {
 
 	// @Bean rekisteröi palautetun olion Springin hallintaan; CommandLineRunner suoritetaan käynnistyksen jälkeen.
 	// Repositoryt ja servicet annetaan parametrina, koska Spring osaa luoda ja injektoida ne.
+	// @ConditionalOnProperty: bean luodaan vain, jos asetus golftracker.demo-data on true
+	// (dev-profiilissa aina, prod-profiilissa vain jos DEMO_DATA=true).
 	@Bean
+	@ConditionalOnProperty(name = "golftracker.demo-data", havingValue = "true")
 	public CommandLineRunner demoData(KayttajaService kayttajaService, KayttajaRepository kayttajaRepo,
 									  KierrosRepository kRepo) {
 		return args -> {
