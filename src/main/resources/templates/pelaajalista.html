@@ -1,46 +1,98 @@
-<!-- MVC-rooli: View. Näyttää pelaajat ja heidän kierroksensa tietokannasta. -->
+<!-- MVC-rooli: View. Näyttää pelaajat, heidän tilastonsa ja kierroksensa tietokannasta. -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Golftracker</title>
-</head>
+<!-- th:replace korvaa tämän elementin fragments.html-tiedoston head-fragmentilla -->
+<head th:replace="~{fragments :: head('Pelaajat')}"></head>
 <body>
-    <h1>Pelaajat ja kierrokset</h1>
+    <header th:replace="~{fragments :: navbar('pelaajat')}"></header>
 
-    <p>Kirjautuneena: <span th:text="${kayttaja}"></span></p>
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">Kirjaudu ulos</button>
-    </form>
+    <main class="container">
+        <section class="page-header">
+            <div>
+                <h1>Pelaajat ja kierrokset</h1>
+                <p class="muted">Kierrosten määrä, paras tulos ja keskiarvo suhteessa pariin.</p>
+            </div>
+            <!-- Jokainen kirjautunut voi lisätä kierroksen; tavallinen käyttäjä lisää sen itselleen -->
+            <a class="btn btn--primary" th:href="@{/kierros/uusi}">+ Lisää kierros</a>
+        </section>
 
-    <!-- Jokainen kirjautunut voi lisätä kierroksen; tavallinen käyttäjä lisää sen itselleen -->
-    <a th:href="@{/kierros/uusi}">Lisää kierros</a>
+        <div class="player-list">
+            <!-- th:each käy läpi jokaisen pelaajan yhteenvedon (vrt. Pythonin for-loop).
+                 th:with luo apumuuttujat: oma = kirjautuneen käyttäjän pelaaja, saaMuokata = näytetäänkö napit. -->
+            <article class="card player" th:each="y : ${yhteenvedot}"
+                     th:with="pelaaja=${y.pelaaja}, oma=${y.pelaaja.id == omaPelaajaId}, saaMuokata=${onAdmin or oma}"
+                     th:classappend="${oma} ? 'player--own'">
 
-    <!-- th:each käy läpi jokaisen pelaajan (vrt. Pythonin for-loop) -->
-    <div th:each="pelaaja : ${pelaajat}">
-        <!-- th:with luo apumuuttujan: saako kirjautunut käyttäjä hallita tämän pelaajan kierroksia -->
-        <th:block th:with="saaMuokata=${onAdmin or pelaaja.id == omaPelaajaId}">
-        <h2 th:text="${pelaaja.nimi}">Nimi</h2>
-        <table border="1">
-            <tr><th>Pvm</th><th>Kenttä</th><th>Par</th><th>Lyönnit</th><th th:if="${saaMuokata}"></th></tr>
-            <!-- pelaaja.kierrokset tulee OneToMany-suhteesta (kutsuu getKierrokset()) -->
-            <tr th:each="kierros : ${pelaaja.kierrokset}">
-                <td th:text="${kierros.pvm}"></td>
-                <td th:text="${kierros.kentta}"></td>
-                <td th:text="${kierros.par}"></td>
-                <td th:text="${kierros.lyonnit}"></td>
-                <!-- Napit näytetään vain omille kierroksille (tai adminille). Palvelin tarkistaa oikeuden silti uudelleen. -->
-                <td th:if="${saaMuokata}">
-                    <!-- {id} korvataan tämän kierroksen id:llä, esim. /kierros/muokkaa/3 -->
-                    <a th:href="@{/kierros/muokkaa/{id}(id=${kierros.id})}">Muokkaa</a>
-                    <!-- Poisto on POST-lomake: th:action lisää CSRF-tokenin automaattisesti -->
-                    <form th:action="@{/kierros/poista/{id}(id=${kierros.id})}" method="post" style="display:inline"
-                          onsubmit="return confirm('Poistetaanko kierros?');">
-                        <button type="submit">Poista</button>
-                    </form>
-                </td>
-            </tr>
-        </table>
-        </th:block>
-    </div>
+                <header class="player__header">
+                    <!-- Avatar: nimen ensimmäinen kirjain -->
+                    <span class="avatar" th:text="${#strings.substring(pelaaja.nimi, 0, 1)}">P</span>
+                    <h2 th:text="${pelaaja.nimi}">Nimi</h2>
+                    <span class="badge" th:if="${oma}">Sinä</span>
+                </header>
+
+                <!-- Tilastot lasketaan PelaajaYhteenveto-luokassa -->
+                <div class="stats" th:if="${y.kierroksia > 0}">
+                    <div class="stat">
+                        <span class="stat__label">Kierroksia</span>
+                        <span class="stat__value" th:text="${y.kierroksia}">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat__label">Paras tulos</span>
+                        <span class="stat__value">
+                            <span th:text="${y.parasKierros.lyonnit}">72</span>
+                            <small th:text="${y.parasKierros.eroPariinTeksti}">E</small>
+                        </span>
+                        <span class="stat__hint" th:text="${y.parasKierros.kentta}">Kenttä</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat__label">Keskiarvo pariin</span>
+                        <span class="stat__value" th:text="${y.keskiarvoTeksti}">E</span>
+                    </div>
+                </div>
+
+                <div class="table-wrap" th:if="${y.kierroksia > 0}">
+                    <!-- Kapealla näytöllä CSS muuttaa rivit pinotuiksi korteiksi (ks. style.css, kohta 9) -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Pvm</th>
+                                <th>Kenttä</th>
+                                <th class="num">Par</th>
+                                <th class="num">Lyönnit</th>
+                                <th class="num">Tulos</th>
+                                <th th:if="${saaMuokata}"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- pelaaja.kierrokset tulee OneToMany-suhteesta (kutsuu getKierrokset()) -->
+                            <tr th:each="kierros : ${pelaaja.kierrokset}">
+                                <!-- #temporals muotoilee LocalDaten suomalaiseen muotoon, esim. 7.10.2026 -->
+                                <td class="col-pvm" th:text="${#temporals.format(kierros.pvm, 'd.M.yyyy')}"></td>
+                                <td class="col-kentta" th:text="${kierros.kentta}"></td>
+                                <td class="num col-par" th:text="${kierros.par}"></td>
+                                <td class="num col-lyonnit" th:text="${kierros.lyonnit}"></td>
+                                <td class="num col-tulos">
+                                    <span class="score" th:classappend="${kierros.eroPariin <= 0} ? 'score--good'"
+                                          th:text="${kierros.eroPariinTeksti}"></span>
+                                </td>
+                                <!-- Napit näytetään vain omille kierroksille (tai adminille). Palvelin tarkistaa oikeuden silti uudelleen. -->
+                                <td class="actions" th:if="${saaMuokata}">
+                                    <!-- {id} korvataan tämän kierroksen id:llä, esim. /kierros/muokkaa/3 -->
+                                    <a class="btn btn--ghost btn--small" th:href="@{/kierros/muokkaa/{id}(id=${kierros.id})}">Muokkaa</a>
+                                    <!-- Poisto on POST-lomake: th:action lisää CSRF-tokenin automaattisesti -->
+                                    <form th:action="@{/kierros/poista/{id}(id=${kierros.id})}" method="post"
+                                          onsubmit="return confirm('Poistetaanko kierros?');">
+                                        <button type="submit" class="btn btn--danger btn--small">Poista</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="empty" th:if="${y.kierroksia == 0}">Ei vielä kierroksia.</p>
+            </article>
+        </div>
+    </main>
 </body>
 </html>

@@ -65,4 +65,15 @@ public class Kierros {
     public Pelaaja getPelaaja() { return pelaaja; }
     public void setPelaaja(Pelaaja pelaaja) { this.pelaaja = pelaaja; }
     public void setId(Long id) { this.id = id; }
+
+    // Johdettu arvo, jota ei tallenneta tietokantaan: tulos suhteessa pariin (esim. 79 lyöntiä par 72 → +7).
+    // Koska JPA-annotaatiot ovat kentissä, JPA ei yritä tehdä tästä getteristä saraketta.
+    public int getEroPariin() { return lyonnit - par; }
+
+    // Golfissa tulos merkitään "+7", "E" (even = par) tai "-2".
+    public String getEroPariinTeksti() {
+        int ero = getEroPariin();
+        if (ero == 0) return "E";
+        return ero > 0 ? "+" + ero : String.valueOf(ero);
+    }
 }
