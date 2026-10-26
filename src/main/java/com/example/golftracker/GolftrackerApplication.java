@@ -2,6 +2,13 @@
 // Tämä luokka käynnistää Springin ja luo testikäyttäjät KayttajaServicen sekä kierrokset KierrosRepositoryn kautta.
 package com.example.golftracker;
 
+import com.example.golftracker.model.Kierros;
+import com.example.golftracker.model.Pelaaja;
+import com.example.golftracker.model.Rooli;
+import com.example.golftracker.repository.KayttajaRepository;
+import com.example.golftracker.repository.KierrosRepository;
+import com.example.golftracker.service.KayttajaService;
+
 import java.time.LocalDate;
 
 import org.springframework.boot.CommandLineRunner;

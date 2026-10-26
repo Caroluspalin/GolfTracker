@@ -1,5 +1,8 @@
 // MVC-rooli: Controller. Hakee pelaajat PelaajaRepositoryn kautta ja antaa ne pelaajalista-näkymälle.
-package com.example.golftracker;
+package com.example.golftracker.controller;
+
+import com.example.golftracker.repository.PelaajaRepository;
+import com.example.golftracker.service.KayttajaService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

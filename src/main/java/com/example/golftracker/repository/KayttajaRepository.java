@@ -1,5 +1,7 @@
 // MVC-rooli: Repository. Tarjoaa Kayttaja-entiteetin tietokantaoperaatiot kirjautumiselle ja rekisteröitymiselle.
-package com.example.golftracker;
+package com.example.golftracker.repository;
+
+import com.example.golftracker.model.Kayttaja;
 
 import java.util.Optional;
 

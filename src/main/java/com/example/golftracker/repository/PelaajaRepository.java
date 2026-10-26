@@ -1,5 +1,7 @@
 // MVC-rooli: Repository. Tarjoaa Pelaaja-entiteetin tietokantaoperaatiot PelaajaControllerille.
-package com.example.golftracker;
+package com.example.golftracker.repository;
+
+import com.example.golftracker.model.Pelaaja;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,5 +1,8 @@
 // MVC-rooli: Service (tietoturva). Spring Security kysyy tältä luokalta kirjautuvan käyttäjän tiedot tietokannasta.
-package com.example.golftracker;
+package com.example.golftracker.service;
+
+import com.example.golftracker.model.Kayttaja;
+import com.example.golftracker.repository.KayttajaRepository;
 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,5 +1,11 @@
 // MVC-rooli: Service. Sisältää käyttäjiin liittyvän sovelluslogiikan: rekisteröinnin ja kirjautuneen käyttäjän haun.
-package com.example.golftracker;
+package com.example.golftracker.service;
+
+import com.example.golftracker.model.Kayttaja;
+import com.example.golftracker.model.Pelaaja;
+import com.example.golftracker.model.Rooli;
+import com.example.golftracker.repository.KayttajaRepository;
+import com.example.golftracker.repository.PelaajaRepository;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;

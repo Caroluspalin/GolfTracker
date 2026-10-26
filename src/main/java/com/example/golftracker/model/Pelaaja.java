@@ -1,5 +1,5 @@
 // MVC-rooli: Model. Pelaaja vastaa tietokannan pelaajariviä ja kokoaa yhteen pelaajan Kierros-oliot.
-package com.example.golftracker;
+package com.example.golftracker.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

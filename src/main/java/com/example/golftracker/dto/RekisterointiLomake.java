@@ -1,5 +1,5 @@
 // MVC-rooli: Model (lomakeolio). Kuljettaa rekisteröitymislomakkeen tiedot näkymän ja controllerin välillä.
-package com.example.golftracker;
+package com.example.golftracker.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

@@ -1,5 +1,10 @@
 // MVC-rooli: Service. Kierrosten sovelluslogiikka ja oikeustarkistukset: kuka saa lisätä, muokata ja poistaa minkäkin kierroksen.
-package com.example.golftracker;
+package com.example.golftracker.service;
+
+import com.example.golftracker.model.Kierros;
+import com.example.golftracker.model.Pelaaja;
+import com.example.golftracker.repository.KierrosRepository;
+import com.example.golftracker.repository.PelaajaRepository;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.example.golftracker;
+package com.example.golftracker.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

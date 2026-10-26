@@ -1,5 +1,9 @@
 // MVC-rooli: Controller. Näyttää rekisteröitymislomakkeen ja luo uuden käyttäjän KayttajaServicen avulla.
-package com.example.golftracker;
+package com.example.golftracker.controller;
+
+import com.example.golftracker.dto.RekisterointiLomake;
+import com.example.golftracker.model.Rooli;
+import com.example.golftracker.service.KayttajaService;
 
 import jakarta.validation.Valid;
 

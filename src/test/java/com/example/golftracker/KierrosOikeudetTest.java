@@ -1,6 +1,13 @@
 // MVC-rooli: testi. Varmistaa, että kierrosten oikeustarkistukset toimivat palvelimella myös suorilla pyynnöillä.
 package com.example.golftracker;
 
+import com.example.golftracker.model.Kayttaja;
+import com.example.golftracker.model.Kierros;
+import com.example.golftracker.model.Pelaaja;
+import com.example.golftracker.model.Rooli;
+import com.example.golftracker.repository.KayttajaRepository;
+import com.example.golftracker.repository.KierrosRepository;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;

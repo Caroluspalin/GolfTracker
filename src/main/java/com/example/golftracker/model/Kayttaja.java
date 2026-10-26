@@ -1,5 +1,5 @@
 // MVC-rooli: Model. Kayttaja on kirjautumistunnus (käyttäjänimi, salasana, rooli) ja liittyy yhteen Pelaaja-profiiliin.
-package com.example.golftracker;
+package com.example.golftracker.model;
 
 import jakarta.persistence.*;
 

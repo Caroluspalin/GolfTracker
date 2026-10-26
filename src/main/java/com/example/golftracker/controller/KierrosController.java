@@ -1,4 +1,8 @@
-package com.example.golftracker;
+package com.example.golftracker.controller;
+
+import com.example.golftracker.model.Kierros;
+import com.example.golftracker.service.KayttajaService;
+import com.example.golftracker.service.KierrosService;
 
 import jakarta.validation.Valid;
 

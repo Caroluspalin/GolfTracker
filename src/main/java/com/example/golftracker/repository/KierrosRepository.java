@@ -1,5 +1,7 @@
 // MVC-rooli: Repository. Tämä rajapinta tarjoaa Kierros-entiteetin tietokantaoperaatiot controllerille ja muulle sovellukselle.
-package com.example.golftracker;
+package com.example.golftracker.repository;
+
+import com.example.golftracker.model.Kierros;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

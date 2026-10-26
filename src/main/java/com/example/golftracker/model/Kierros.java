@@ -1,5 +1,5 @@
 // MVC-rooli: Model. Kierros kuvaa tietokannan yhtä golfkierrosta ja liittyy yhteen Pelaaja-olioon.
-package com.example.golftracker;
+package com.example.golftracker.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
