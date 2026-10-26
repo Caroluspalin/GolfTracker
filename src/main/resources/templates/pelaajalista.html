@@ -17,23 +17,21 @@
     <!-- th:each käy läpi jokaisen pelaajan (vrt. Pythonin for-loop) -->
     <div th:each="pelaaja : ${pelaajat}">
         <h2 th:text="${pelaaja.nimi}">Nimi</h2>
-        <table border="1">
-            <tr><th>Pvm</th><th>Kenttä</th><th>Par</th><th>Lyönnit</th><th></th></tr>
-            <!-- pelaaja.kierrokset tulee OneToMany-suhteesta (kutsuu getKierrokset()) -->
-            <tr th:each="kierros : ${pelaaja.kierrokset}">
-                <td th:text="${kierros.pvm}"></td>
-                <td th:text="${kierros.kentta}"></td>
-                <td th:text="${kierros.par}"></td>
-                <td th:text="${kierros.lyonnit}"></td>
-                <td>
-                    <!-- {id} korvataan tämän kierroksen id:llä, esim. /kierros/muokkaa/3 -->
-                 <td th:if="${onAdmin}">
-                    <a th:href="@{/kierros/muokkaa/{id}(id=${kierros.id})}">Muokkaa</a>
-                    <a th:href="@{/kierros/poista/{id}(id=${kierros.id})}">Poista</a>
-                </td>
-                </td>
-            </tr>
-        </table>
+       <table border="1">
+        <tr><th>Pvm</th><th>Kenttä</th><th>Par</th><th>Lyönnit</th><th th:if="${onAdmin}"></th></tr>
+        <!-- pelaaja.kierrokset tulee OneToMany-suhteesta (kutsuu getKierrokset()) -->
+        <tr th:each="kierros : ${pelaaja.kierrokset}">
+            <td th:text="${kierros.pvm}"></td>
+            <td th:text="${kierros.kentta}"></td>
+            <td th:text="${kierros.par}"></td>
+            <td th:text="${kierros.lyonnit}"></td>
+            <!-- {id} korvataan tämän kierroksen id:llä, esim. /kierros/muokkaa/3 -->
+            <td th:if="${onAdmin}">
+                <a th:href="@{/kierros/muokkaa/{id}(id=${kierros.id})}">Muokkaa</a>
+                <a th:href="@{/kierros/poista/{id}(id=${kierros.id})}">Poista</a>
+            </td>
+        </tr>
+    </table>
     </div>
 </body>
 </html>
