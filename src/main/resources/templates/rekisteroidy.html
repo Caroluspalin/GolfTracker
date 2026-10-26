@@ -1,0 +1,39 @@
+<!-- MVC-rooli: View. Rekisteröitymislomake: luo käyttäjätunnuksen ja samalla oman pelaajaprofiilin. -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Rekisteröidy</title>
+</head>
+<body>
+    <h1>Luo tunnukset</h1>
+
+    <!-- th:action lisää lomakkeeseen automaattisesti piilotetun CSRF-tokenin -->
+    <form th:action="@{/rekisteroidy}" th:object="${lomake}" method="post">
+
+        <label>Käyttäjänimi:</label>
+        <input type="text" th:field="*{username}">
+        <!-- th:errors näyttää kentän validointivirheet, th:if piilottaa rivin kun virheitä ei ole -->
+        <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+        <br>
+
+        <label>Pelaajan nimi:</label>
+        <input type="text" th:field="*{nimi}">
+        <span th:if="${#fields.hasErrors('nimi')}" th:errors="*{nimi}"></span>
+        <br>
+
+        <label>Salasana:</label>
+        <input type="password" th:field="*{salasana}">
+        <span th:if="${#fields.hasErrors('salasana')}" th:errors="*{salasana}"></span>
+        <br>
+
+        <label>Salasana uudelleen:</label>
+        <input type="password" th:field="*{salasanaUudelleen}">
+        <span th:if="${#fields.hasErrors('salasanaUudelleen')}" th:errors="*{salasanaUudelleen}"></span>
+        <br>
+
+        <button type="submit">Rekisteröidy</button>
+    </form>
+
+    <a th:href="@{/login}">Onko sinulla jo tunnukset? Kirjaudu sisään</a>
+</body>
+</html>
