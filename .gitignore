@@ -31,3 +31,17 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Salaisuudet ja paikalliset asetukset (ei GitHubiin) ###
+# .env sisältää tietokannan salasanan. .env.example on malli ilman salasanoja, ja se committataan.
+.env
+.env.*
+!.env.example
+*.env
+# Paikalliset Spring-asetukset, jos niitä joskus tarvitaan (esim. application-local.properties)
+application-local.properties
+application-*.local.properties
+src/main/resources/application-local.properties
+
+### macOS ###
+.DS_Store
