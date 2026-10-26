@@ -3,7 +3,6 @@ package com.example.golftracker;
 
 import com.example.golftracker.model.Kayttaja;
 import com.example.golftracker.model.Kierros;
-import com.example.golftracker.model.Pelaaja;
 import com.example.golftracker.model.Rooli;
 import com.example.golftracker.repository.KayttajaRepository;
 import com.example.golftracker.repository.KierrosRepository;
